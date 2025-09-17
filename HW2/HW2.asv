@@ -59,13 +59,14 @@ D = fft(data);
 df = fs/N;
 f = df*(-N/2:N/2-1);
 Dshift = fftshift(D);
+power_db = 20*log10(Dshift);
 
 % Plotting
 figure;
 subplot(2,1,1)
 plot(x, data_re, x, data_im)
 subplot(2,1,2)
-plot(f, abs(Dshift))
+plot(f, abs(power_db))
 
 %% Problem 3
 
@@ -110,6 +111,7 @@ plot(f, abs(fft_mod_shift))
 
 %% Problem 4
 % Definitions carry over from above
+a = 100;
 
 % Demodulation
 I_t = transmit.*2.*cos(wc*t);
@@ -120,5 +122,14 @@ demod_signal = I_t + 1i*Q_t;
 demod_fft = fft(demod_signal);
 demod_fft_shift = fftshift(demod_fft);
 
+% LPF
+demod_fft_shift_filt = demod_fft_shift;
+demod_fft_shift_filt(f > a | f < -a) = 0;
+
 figure;
-plot(f, abs(demod_fft_shift))
+hold on;
+plot(f, abs(demod_fft_shift), 'alpha', 0.5)
+plot(f, abs(fftshift(fft(I_t))), 'alpha', 0.5)
+plot(f, abs(fftshift(fft(Q_t))), 'alpha', 0.5)
+plot(f, abs(demod_fft_shift_filt))
+legend('Demodulated signal', 'I(t)', )

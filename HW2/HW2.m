@@ -27,14 +27,14 @@ sig_5_im = (sig_5 - conj(sig_5)) / 2i;
 % Plotting
 figure;
 subplot(3,1,1);
-title("200 Hz")
 plot(one_s_200, sig_200_re, one_s_200, sig_200_im);
+title('200 Hz')
 subplot(3,1,2);
-title("20 Hz")
 plot(one_s_20, sig_20_re, one_s_20, sig_20_im);
+title('20 Hz')
 subplot(3,1,3);
-title("5 Hz")
 plot(one_s_5, sig_5_re, one_s_5, sig_5_im);
+title('5 Hz')
 
 %% Problem 2
 
@@ -63,10 +63,16 @@ power_db = 20*log10(Dshift);
 
 % Plotting
 figure;
-subplot(2,1,1)
+subplot(3,1,1)
 plot(x, data_re, x, data_im)
-subplot(2,1,2)
+title('Time Domain')
+subplot(3,1,2)
 plot(f, abs(power_db))
+title('dB Spectrum (Power)')
+subplot(3,1,3)
+plot(f, abs(Dshift))
+title('Spectrum')
+
 
 %% Problem 3
 
@@ -103,10 +109,13 @@ fft_mod_shift = fftshift(fft_mod);
 figure;
 subplot(3,1,1)
 plot(t, transmit)
+title('Time-domain modulated signal')
 subplot(3,1,2)
 plot(f, abs(fft_signal_shift))
+title('Baseband signal spectrum')
 subplot(3,1,3)
 plot(f, abs(fft_mod_shift))
+title('Modulated spectrum')
 
 
 %% Problem 4
@@ -123,7 +132,13 @@ demod_fft = fft(demod_signal);
 demod_fft_shift = fftshift(demod_fft);
 
 % LPF
-demod_fft_shift(f > a | f < -a) = 0;
+demod_fft_shift_filt = demod_fft_shift;
+demod_fft_shift_filt(f > a | f < -a) = 0;
 
 figure;
-plot(f, abs(demod_fft_shift))
+hold on;
+plot(f, abs(demod_fft_shift), '--')
+plot(f, abs(fftshift(fft(I_t))), '--')
+plot(f, abs(fftshift(fft(Q_t))), '--')
+plot(f, abs(demod_fft_shift_filt))
+legend('Demodulated signal', 'I(t)', 'Q(t)', 'Demodulated signal with LPF')
